@@ -1,6 +1,3 @@
-# 1. Operator Precedence Table: (top_terminal, lookahead) -> '<', '>', or '='
-# '<' (yields to) / '=' (equal) -> SHIFT
-# '>' (takes precedence over)   -> REDUCE
 PRECEDENCE = {
     ('id', '+'): '>', ('id', '*'): '>', ('id', ')'): '>', ('id', '$'): '>',
     ('+', 'id'): '<', ('+', '+'): '>', ('+', '*'): '<', ('+', '('): '<', ('+', ')'): '>', ('+', '$'): '>',
@@ -10,7 +7,6 @@ PRECEDENCE = {
     ('$', 'id'): '<', ('$', '+'): '<', ('$', '*'): '<', ('$', '('): '<',
 }
 
-# 2. Valid handles (right-hand sides) that reduce to 'E'
 HANDLES = {
     ('id',),
     ('E', '+', 'E'),
@@ -31,7 +27,7 @@ def top_terminal(stack):
 
 def reduce_handle(stack):
     """Finds and reduces a valid handle at the top of the stack to 'E'."""
-    for length in (3, 1):  # Check 3-symbol handles (E+E, E*E, (E)) before 1-symbol (id)
+    for length in (3, 1): 
         if len(stack) >= length:
             candidate = tuple(stack[-length:])
             if candidate in HANDLES:
@@ -55,7 +51,6 @@ def parse(tokens):
         stack_str = ' '.join(stack)
         input_str = ' '.join(inp[idx:])
 
-        # Accept condition: only $ and start symbol E on stack, and input is at $
         if top_t == '$' and lookahead == '$':
             if stack == ['$', 'E']:
                 print(f"{stack_str:<22} {'':<5} {input_str:<25} ACCEPT")
@@ -79,7 +74,5 @@ def parse(tokens):
             print(f"{stack_str:<22} {'err':<5} {input_str:<25} ERROR: unexpected '{lookahead}' after '{top_t}'")
             return False
 
-
-# --- Test it ---
 sample_tokens = ['id', '+', 'id', '*', 'id']
 parse(sample_tokens)
